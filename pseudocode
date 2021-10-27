@@ -1,0 +1,324 @@
+Research Track 1 - Assignment 1 
+PSEUDO-CODE
+
+1. Initialize global variables
+
+SET a_th TO 2
+SET d_th TO 0.4
+
+SET straight_on_speed TO 50
+SET turn_speed TO 10
+SET refresh_rate TO 0.05
+
+SET orientation TO 270
+SET direction TO 4
+SET memory TO 2
+INITIALIZE distance TO 0
+
+INITIALIZE temp_rot_s TO 0
+INITIALIZE temp_rot_g TO 0
+INITIALIZE current_rot_s TO 0
+INITIALIZE current_rot_g TO 0
+
+SET old_direction TO 0
+SET print_flag TO 0
+SET error_flag TO 1
+INITIALIZE rot_flag TO 0
+
+INITIALIZE instance R of class Robot
+
+2. Functions
+
+FUNCTION drive WITH (speed, seconds)
+    SET R.motors[0].m0.power EQUALS TO speed
+    SET R.motors[0].m1.power EQUALS TO speed
+    CALL time.sleep WITH seconds
+    SET R.motors[0].m0.power EQUALS TO 0
+    SET R.motors[0].m1.power EQUALS TO 0
+ENDFUNCTION
+
+FUNCTION turn WITH (speed, seconds)
+    SET R.motors[0].m0.power EQUALS TO speed
+    SET R.motors[0].m1.power EQUALS TO -speed
+    CALL time.sleep WITH seconds
+    SET R.motors[0].m0.power EQUALS TO 0
+    SET R.motors[0].m1.power EQUALS TO 0
+ENDFUNCTION
+
+FUNCTION find_token_silver
+    SET dist TO 100
+    FOR token IN CALL R.see
+        IF token.info.marker_type IS MARKER_TOKEN_SILVER AND token.dist IS LESS THAN dist THEN
+            SET dist EQUALS TO token.dist
+        ENDIF
+
+        SET rot_y EQUALS TO token.rot_y
+    ENDFOR  
+
+    IF dist IS EQUALS TO 100
+        RETURN -1, -1
+    ELSE
+        RETURN dist, rot_y
+    ENDIF
+ENDFUNCTION
+
+FUNCTION find_token_gold
+    SET dist TO 100
+    FOR token IN CALL R.see
+        IF token.info.marker_type IS MARKER_TOKEN_GOLDEN AND token.dist IS LESS THAN dist THEN
+            SET dist EQUALS TO token.dist
+        ENDIF
+
+        SET rot_y EQUALS TO token.rot_y
+    ENDFOR  
+
+    IF dist IS EQUALS TO 100
+        RETURN -1, -1
+    ELSE
+        RETURN dist, rot_y
+    ENDIF
+ENDFUNCTION
+
+FUNCTION move_behind
+    CALL turn WITH (60, 1)
+    CALL time.sleep WITH (0.1)
+    CALL R.release
+    CALL time.sleep WITH (0.1)
+    CALL turn WITH (-60, 1)
+    CALL drive WITH (straight_on_speed, 0.5)
+ENDFUNCTION
+
+FUNCTION rotate WITH (orientation, direction, rot, current_rot, way)
+    IF current_rot IS GREATER THAN 0 AND rot IS LESS THAN 0 THEN
+        SET difference EQUALS TO current_rot - rot
+    ELIF current_rot IS LESS THAN 0 AND rot IS GREATER THAN 0 THEN
+        SET difference EQUASL TO rot - current_rot
+    ELSE
+        SET current_rot CALL module WITH (current_rot)
+        SET rot CALL module WITH rot
+
+        IF rot IS GREATER THAN current_rot THEN
+            SET difference EQUALS TO rot - current_rot
+            SET difference EQUALS TO current_rot - rot
+        ENDIF
+    ENDIF
+
+    IF difference IS LESS THAN 135 THEN
+        IF way IS EQUALS TO "left" THEN
+            ADD difference TO orientation
+        ELSE
+            SUBTRACT difference FROM orientation
+        ENDIF
+    ENDIF
+
+    SET orientation, direction CALL update WITH (orientation, direction)
+
+    RETURN orientation, direction
+ENDFUNCTION
+
+FUNCTION update WITH (orientationa and direction)
+    IF orientation IS GREATER THAN 360 THEN
+        SUBTRACT 360 FROM orientation
+    ELIF orientation IS LESS THAN 0 THEN
+        ADD 360 TO orientation
+    ENDIF
+
+    IF orientation IS BETWEEN 0 and 45 THEN
+        SET direction TO 1
+    ELIF orientation IS BETWEEN 45 and 135 THEN
+        SET direction TO 2
+    ELIF orientation IS BETWEEN 135 and 225 THEN
+        SET direction TO 3
+    ELIF orientation IS BETWEEN 225 and 315 THEN
+        SET direction TO 4
+    ELIF orientation IS BETWEEN 315 and 360 THEN
+        SET direction TO 1
+    ENDIF
+
+    RETURN orientation, direction
+ENDFUNCTION
+
+FUNCTION module WITH (rot)
+    IF rot IS LESS THAN 0 THEN 
+        RETURN rot * -1
+    ELSE
+        RETURN rot
+    ENDIF
+ENDFUNCTION
+
+3. Program
+
+PRINT "Turning on the robot"
+CALL time.sleep WITH (3)
+PRINT "GO!"
+
+WHILE 1
+    SET dist_s, rot_s CALL find_token_silver
+    SET dist_g, rot_g CALL find_token_gold
+            
+    SET rot_s_m CALL module WITH (rot_s)
+    SET rot_g_m CALL module WITH (rot_g)
+            
+    IF dist_s IS EQUALS TO -1 THEN
+        Print "I don't see any silver token... :("
+    ELSE
+        IF dist_s IS LESS THAN d_th AND rot_s_m IS LESS THAN a_th THEN
+            CALL R.grab
+            PRINT "Gotcha!"
+            CALL move_behind
+        ENDIF
+    ENDIF
+
+    IF rot_g_m IS BETWEEN 89 and 91 AND error_flag IS EQUALS TO 1 THEN
+        IF orientation IS BETWEEN 0 and 45 THEN
+            SET orientation to 0
+            SET direction to 1
+        ELIF orientation IS BETWEEN 45 and 135 THEN
+            SET orientation to 90
+            SET direction to 2
+        ELIF orientation IS BETWEEN 135 and 225 THEN
+            SET orientation to 180
+            SET direction to 3
+        ELIF orientation IS BETWEEN 225 and 315 THEN
+            SET orientation to 270
+            SET direction to 4
+        ELIF orientation IS BETWEEN 315 and 360 THEN
+            SET orientation to 0
+            SET direction to 1
+        ENDIF
+    ENDIF
+
+    IF dist_s IS LESS THAN dist_g AND rot_s_m IS LESS THAN 90 THEN
+        IF rot_s_m IS LESS THAN a_th THEN
+            WHILE dist_s IS GREATER THAN d_th
+                SET dist_s, rot_s CALL find_token_silver
+                CALL drive WITH (+straight_on_speed, refresh_rate)
+            ENDWHILE
+        ELSE 
+            SET error_flag to 0
+
+            IF temp_rot_s IS EQUALS TO 0 THEN
+                SET temp_rot_s EQUALS TO rot_s
+                SET current_rot_s EQUALS TO rot_s
+            ENDIF
+
+            IF temp_rot_s IS NOT EQUALS TO 0 AND 
+            (rot_s_m - module(current_rot_s) IS BETWEEN 0 and 15 OR
+            current_rot_s - module(rot_s_m) IS BETWEEN 0 and 15) THEN
+                SET current_rot_s equals to rot_s    
+            ENDIF
+
+            IF rot_s IS LESS THAN 0 THEN
+                SET rot_flag EQUALS TO 1
+                CALL turn WITH (-turn_speed, refresh_rate)
+            ELSE
+                SET rot_flag EQUALS TO 2
+                CALL turn WITH (+turn_speed, refresh_rate)
+            ENDIF
+
+            CONTINUE
+        ENDIF
+    ENDIF
+
+    IF rot_g_m IS BETWEEN 10 and 85 THEN
+        SET error_flag TO 0
+
+        IF temp_rot_g IS EQUALS TO 0 THEN
+            SET temp_rot_g EQUALS TO rot_g
+            SET current_rot_g EQUALS TO rot_g
+        ENDIF
+
+        IF temp_rot_g IS NOT EQUALS TO 0 AND  
+        (rot_g_m - module(current_rot_g) IS BETWEEN 0 and 15 OR
+        current_rot_g - module(rot_g_m) IS BETWEEN 0 and 15) THEN
+            SET current_rot_g EQUALS TO rot_g    
+        ENDIF
+
+        IF rot_g IS LESS THAN 0 THEN
+            SET rot_flag EQUALS TO 3
+            CALL turn WITH (+turn_speed, refresh_rate)
+        ELSE
+            SET rot_flag EQUALS TO 4
+            CALL turn WITH (-turn_speed, refresh_rate)
+        ENDEIF
+
+        CONTINUE
+    ENDIF
+
+    IF dist_g IS LESS THAN 1 AND rot_g_m IS LESS THAN 10 THEN
+        CALL turn WITH (-60, 0.5)
+        SET distance TO 0
+        ADD 90 TO orientation
+        SET orientation, direction CALL update WITH (orientation, direction)
+    ENDIF
+
+    IF direction IS NOT EQUALS TO memory THEN
+        SET temp_dist_g CALLING find_token_gold
+        CALL drive WITH (+straight_on_speed, refresh_rate)
+        SET dist_g CALL find_token_gold
+
+        IF dist_g IS GREATER THAN temp_dist_g AND  
+        dist_g - temp_dist_g IS LESS THAN 0.05 THEN
+            ADD dist_g - temp_dist_g TO distance
+        ELIF dist_g IS LESS THAN temp_dist_g AND 
+        temp_dist_g - dist_g IS LESS THAN 0.05 THEN
+            ADD temp_dist_g - dist_g TO distance
+        ENDIF
+
+        IF distance IS GREATER THAN 0.075 THEN
+            SET distance TO 0
+            SET error_flag TO 1
+
+            IF direction IS EQUALS TO 1 THEN
+                SET memory TO 3
+            ELIF direction IS EQUALS TO 2 THEN
+                SET memory TO 4
+            ELIF direction is EQUALS TO 3 THEN
+                SET memory TO 1
+            ELSE 
+                SET memory TO 2
+            ENDIF
+
+            IF print_flag IS EQUALS TO 1 AND old_direction IS NOT EQUALS TO direction THEN
+                PRINT "New memory: " + memory
+                SET print_flag EQUALS TO 0
+            ENDIF
+        ENDIF
+
+        IF rot_flag IS EQUALS TO 1 THEN
+            SET orientation, direction CALL rotate 
+            WITH (orientation, direction, temp_rot_s, current_rot_s, "left")
+        ELIF rot_flag IS EQUALS TO 2 THEN
+            SET orientation, direction CALL rotate 
+            WITH (orientation, direction, temp_rot_s, current_rot_s, "right")
+        ELIF rot_flag IS EQUALS TO 3 THEN
+            Set orientation, direction CALL rotate 
+            WITH (orientation, direction, temp_rot_g, current_rot_g, "right")
+        ELIF rot_flag IS EQUALS TO 4 THEN
+            Set orientation, direction CALL rotate 
+            WITH (orientation, direction, temp_rot_g, current_rot_g, "left")
+        ENDIF
+
+        IF rot_flag IS EQUALS TO 1 OR 2 OR 3 OR 4 THEN
+            IF print_flag IS EQUALS TO 0 AND old_direction IS NOT EQUALS TO direction THEN
+                # PRINT "New orientation = " + orientation
+                PRINT "New direction = " + direction
+                SET old_direction EQUALS TO direction
+                SET print_flag EQUALS TO 1
+            ENDIF
+
+            SET print_flag TO 100
+        ENDIF
+
+        SET rot_flag TO 0
+        SET temp_rot_s TO 0
+        SET temp_rot_g TO 0
+        SET current_rot_s TO 0
+        SET current_rot_g TO 0
+    ELSE
+        CALL turn WITH (-60, 0.5)
+        SET distance TO 0
+        ADD 90 TO orientation
+        SET orientation, direction CALL update WITH (orientation, direction)
+    ENDIF
+ENDWHILE
