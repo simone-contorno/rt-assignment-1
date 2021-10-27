@@ -19,7 +19,7 @@ How install and run rt_assignment_1 on Linux.<br>
 
 ### Improvements
 How this program could be improved.<br>
-[Go to Improvements](#improvements)
+[Go to Improvements](#improve)
 
 <a name="intro"></a>
 ### Introduction
@@ -87,7 +87,7 @@ Now, to run 'assignment.py' type:
 You can also change some parameters into the code to modify the robot performance (e.g. straight_on_speed, turn_speed and refresh_rate).<br>
 You will find all the information about functions and variables in the file thanks to the comments.
 
-<a name="improvements"></a>
+<a name="improve"></a>
 ### Improvements
 
 It could be improved the precision with the robot computes its orientation, maybe using a PID controller.
