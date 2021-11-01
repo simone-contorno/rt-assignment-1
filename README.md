@@ -39,9 +39,8 @@ At the start it looks like this:
 <a name="how"></a>
 ### How it works
 
-The program use principally 3 parameters:
+The program use principally 2 parameters:
     <ol>
-        <li>Orientation: check how the robot is oriented.</li>
         <li>Direction: signal the direction where the robot is going on.</li>
             <ul>
                 <li>1 - Right</li>
@@ -51,10 +50,10 @@ The program use principally 3 parameters:
             </ul>
         <li>Memory: memorize the last direction (with the opposite direction value).</li>
     </ol>
-Using these variables the robot can follow the path without worrying about the next silver token and ajusting 
-the direction to remain almost parallel to the borders.<br>
-When it is close enough to a silver token, the robot starts to align itself with the token and reaches it to grab and move it behind itself.
-<br>Look the pseudo-code file for more details.<br>
+Using these variables the robot can follow the path without worrying about the next silver token and adjusting the direction to remain almost parallel to the borders.<br>
+When it is too close to a golden token (in front of it), the robot turns, searching a new free direction.<br>
+When it is close enough to a silver token, the robot starts to align itself with the token and reaches it to grab and move it behind itself.<br>
+Look the pseudo-code file for more details.<br>
 
 <a name="installation"></a>
 ### Installation and Execution
@@ -90,6 +89,7 @@ You will find all the information about functions and variables in the file than
 <a name="improve"></a>
 ### Improvements
 
-It could be improved the precision with the robot computes its orientation, maybe using a PID controller.
+The robot view could be improved to a better performance: <br>
+instead of turn when it is against a wall, it can turns following better rules, like checking the distance of more than one golden token and computing the path direction to follow it.
 <br>
 Bye.    :slightly_smiling_face:
