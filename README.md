@@ -90,6 +90,6 @@ You will find all the information about functions and variables in the file than
 ### Improvements
 
 The robot view could be improved to a better performance: <br>
-instead of turn when it is against a wall, it can turns following better rules, like checking the distance of more than one golden token and computing the path direction to follow it.
+instead of turn when it is against a wall, it can turns following better rules, like checking the distance of more than one golden token and computing the path direction to follow it.<br>
 <br>
 Bye.    :slightly_smiling_face:
