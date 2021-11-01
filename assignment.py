@@ -24,7 +24,7 @@ kp = 1 # Gain
 margin_error = 1 # Spin precision
 
 '''
-Change these values if the map changes:
+Parameters from golden tokens:
     1. max_angle_from_g : if the robot has an angle less than this one and more than
     min_angle_from_g, it turns to remain parallel to the borders.
     2. min_angle_from_g : if the robot has an angle less than this one and the distance
@@ -159,7 +159,6 @@ def update(direction) :
         direction = 3
 
     return direction
-
 
 '''
 Function to turn the robot of a grades value :
