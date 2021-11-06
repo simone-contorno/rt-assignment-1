@@ -85,7 +85,7 @@ You will find all the information about functions and variables in the file than
 <a name="improve"></a>
 ### Improvements
 
-Some possible and greatful improvements: <br>
+Let's notice some possible and very well improvements:<br>
     <ul>
         <li>The robot could turn better with a better check about the golden tokens around it.</li>
         <li>The robot could identify better the silver token, for instance it could go to reach it
