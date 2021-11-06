@@ -7,24 +7,16 @@ SET a_th TO 2
 SET d_th TO 0.4
 
 SET straight_on_speed TO 75
-SET turn_speed TO 12.5
 SET kp TO 1
 SET margin_error TO 1
 
-SET max_angle_from_g TO 82.5
+SET max_angle_from_g TO 80
 SET min_angle_from_g TO 10
 SET dist_from_g TO 1
 SET turn_from_g TO 90
 
 SET refresh_rate TO 0.05
 
-SET direction TO 4
-SET memory TO 2
-SET turn_value TO 90
-INITIALIZE distance TO 0
-SET distance_to_run TO 0.06
-
-INITIALIZE old_direction TO 0
 INITIALIZE print_flag TO 0
 
 INITIALIZE instance R of class Robot
@@ -67,7 +59,7 @@ ENDFUNCTION
 FUNCTION find_token_gold
     SET dist TO 100
     FOR token IN CALL R.see
-        IF token.info.marker_type IS MARKER_TOKEN_GOLDEN AND token.dist IS LESS THAN dist THEN
+        IF token.info.marker_type IS MARKER_TOKEN_GOLD AND token.dist IS LESS THAN dist THEN
             SET dist EQUALS TO token.dist
         ENDIF
 
@@ -81,32 +73,8 @@ FUNCTION find_token_gold
     ENDIF
 ENDFUNCTION
 
-FUNCTION move_behind
-    CALL turn_p WITH (180)
-    CALL R.release
-    CALL turn_P WITH (180)
-ENDFUNCTION
-
-FUNCTION update WITH (orientation, direction)
-    SET heading TO R.heading * 100 / math.pi
-
-    IF heading IS BETWEEN -45 and 45 THEN
-        SET direction TO 1
-    ELIF heading IS BETWEEN -135 and -45 THEN
-        SET direction TO 2
-    ELIF heading IS BETWEEN 180 and -135 THEN
-        SET direction TO 3
-    ELIF heading IS BETWEEN 45 and 135 THEN
-        SET direction TO 4
-    ELIF heading IS BETWEEN 135 and 180 THEN
-        SET direction TO 3
-    ENDIF
-
-    RETURN direction
-ENDFUNCTION
-
 FUNCTION turn_P WITH (grades)
-    SET heading TO R.heading * 100 / math.pi
+    SET heading TO R.heading * 180 / math.pi
 
     IF heading IS BETWEEN -180 and 0 THEN
         SET heading TO CALL module WITH (heading)
@@ -114,7 +82,7 @@ FUNCTION turn_P WITH (grades)
         SET heading to 360 - heading
     ENDIF
 
-    SET final TO heading + grades
+    SET final TO heading + CALL module WITH (grades)
 
     IF final IS GREATER THAN 360 THEN
         SET final TO final - 360
@@ -126,10 +94,13 @@ FUNCTION turn_P WITH (grades)
     ENDIF
 
     WHILE error IS GREATER THAN margin_error 
-        CALL turn WITH (-error * kp, refresh_rate)
+        IF grades IS GREATER THAN 0 THEN 
+            CALL turn WITH (-error * kp, refresh_rate)
+        ELSE 
+            CALL turn WITH (+error * kp, refresh_rate)
+        ENDIF
 
-        SET heading TO R.heading * 100 / math.pi
-
+        SET heading TO R.heading * 180 / math.pi
         IF heading IS BETWEEN -180 and 0 THEN
             SET heading TO CALL module WITH (heading)
         ELIF heading IS BETWEEN 0 and 180 THEN
@@ -142,6 +113,37 @@ FUNCTION turn_P WITH (grades)
             SET error TO final - heading
             SET error TO CALL module WITH (error)
         ENDIF
+
+        IF error IS GREATER THAN 180 THEN
+            SET error TO 360 - error
+        ENDIF
+ENDFUNCTION
+
+FUNCTION move_behind
+    SET dist_1 TO 100
+    FOR token IN CALL R.see
+        IF token.info.marker_type IS MARKER_TOKEN_GOLD AND token.dist IS LESS THAN dist_1 
+            AND token.rot_y IS BETWEEN 75 AND 105 THEN
+                SET dist_1 EQUALS TO token.dist
+        ENDIF
+    ENDFOR
+
+    SET dist_2 TO 100
+    FOR token IN CALL R.see
+        IF token.info.marker_type IS MARKER_TOKEN_GOLD AND token.dist IS LESS THAN dist_2 
+            AND token.rot_y IS BETWEEN -105 AND -75 THEN
+                SET dist_2 EQUALS TO token.dist
+        ENDIF
+    ENDFOR
+
+    IF dist_1 IS GREATER THAN dist_2 THEN
+        CALL turn_P WITH (-180)
+    ELSE 
+        CALL turn_P WITH (+180)
+    ENDIF
+
+    CALL R.release
+    CALL turn_P WITH (180)
 ENDFUNCTION
 
 FUNCTION module WITH (rot)
@@ -159,12 +161,12 @@ CALL time.sleep WITH (3)
 PRINT "GO!"
 
 WHILE 1
-    SET direction CALL update WITH (direction)
-
     SET dist_s, rot_s CALL find_token_silver
+
     SET dist_g, rot_g CALL find_token_gold
             
     SET rot_s_m CALL module WITH (rot_s)
+
     SET rot_g_m CALL module WITH (rot_g)
             
     IF dist_s IS EQUALS TO -1 THEN
@@ -174,17 +176,25 @@ WHILE 1
             CALL R.grab
             PRINT "Gotcha!"
             CALL move_behind
+            SET print_flag TO 1
         ENDIF
     ENDIF
 
-    IF dist_s IS LESS THAN dist_g AND rot_s_m IS LESS THAN 90 and direction IS NOT EQUALS to memory THEN
+    IF dist_s IS LESS THAN dist_g AND rot_s_m IS LESS THAN 90 THEN
+        IF print_flag IS EQUALS TO 0 
+            PRINT "Silver token found"
+            SET print_flag TO 2
+        ELIF print_flag IS EQUALS TO 1
+            SET print_flag TO 0
+        ENDIF
+
         IF rot_s_m IS LESS THAN a_th THEN
-            CALL drive WITH (+straight_on_speed, refresh_rate)
+            CALL drive WITH (+dist_s * straight_on_speed, refresh_rate)
         ELSE 
             IF rot_s IS LESS THAN 0 THEN
-                CALL turn WITH (-turn_speed, refresh_rate)
+                CALL turn WITH (-rot_s_m, refresh_rate)
             ELSE
-                CALL turn WITH (+turn_speed, refresh_rate)
+                CALL turn WITH (+rot_s_m, refresh_rate)
             ENDIF
 
             CONTINUE
@@ -192,60 +202,74 @@ WHILE 1
     ENDIF
 
     IF rot_g_m IS BETWEEN min_angle_from_g and max_angle_from_g THEN
+        SET error TO 90 - rot_g_m
 
         IF rot_g IS LESS THAN 0 THEN
-            CALL turn WITH (+turn_speed, refresh_rate)
+            CALL turn WITH (+error, refresh_rate)
         ELSE
-            CALL turn WITH (-turn_speed, refresh_rate)
-        ENDEIF
+            CALL turn WITH (-error, refresh_rate)
+        ENDIF
 
         CONTINUE
     ENDIF
 
-    IF dist_g IS LESS THAN dist_from_g AND rot_g_m IS LESS THAN min_angle_from_g THEN
-        CALL turn_P WITH (90)
-        SET distance TO 0
-    ENDIF
+    SET dist_0 TO 100
+    FOR token IN CALL R.see
+        IF token.info.marker_type IS MARKER_TOKEN_GOLD AND token.dist IS LESS THAN dist_0 
+            AND token.rot_y IS BETWEEN -min_angle_from_g AND min_angle_from_g THEN
+                SET dist_0 EQUALS TO token.dist
+        ENDIF
+    ENDFOR
 
-    IF direction IS NOT EQUALS TO memory THEN
-        SET temp_dist_g CALLING find_token_gold
-        CALL drive WITH (+straight_on_speed, refresh_rate)
-        SET dist_g CALL find_token_gold
+    IF dist_0 IS LESS THAN 1 THEN 
+        SET dist_1 TO 100
+        FOR token IN CALL R.see
+            IF token.info.marker_type IS MARKER_TOKEN_GOLD AND token.dist IS LESS THAN dist_1 
+                AND token.rot_y IS BETWEEN 80 AND 100 THEN
+                    SET dist_1 EQUALS TO token.dist
+            ENDIF
+        ENDFOR
 
-        IF dist_g IS GREATER THAN temp_dist_g AND dist_g - temp_dist_g IS LESS THAN 0.05 THEN
-            ADD dist_g - temp_dist_g TO distance
-        ELIF dist_g IS LESS THAN temp_dist_g AND temp_dist_g - dist_g IS LESS THAN 0.05 THEN
-            ADD temp_dist_g - dist_g TO distance
+        IF dist_1 IS EQUALS TO 100 THEN
+            PRINT "Error! I did not find any golden token on the right..."
         ENDIF
 
-        IF distance IS GREATER THAN distance_to_run THEN
-            SET distance TO 0
+        SET dist_2 TO 100
+        FOR token IN CALL R.see
+            IF token.info.marker_type IS MARKER_TOKEN_GOLD AND token.dist IS LESS THAN dist_2 
+                AND token.rot_y IS BETWEEN -100 AND -80 THEN
+                    SET dist_2 EQUALS TO token.dist
+            ENDIF
+        ENDFOR
 
-            IF direction IS EQUALS TO 1 THEN
-                SET memory TO 3
-            ELIF direction IS EQUALS TO 2 THEN
-                SET memory TO 4
-            ELIF direction is EQUALS TO 3 THEN
-                SET memory TO 1
+        IF dist_2 IS EQUALS TO 100 THEN
+            PRINT "Error! I did not find any golden token on the left..."
+        ENDIF
+
+        IF dist_1 IS GREATER THAN dist_2 THEN
+            PRINT "Turn right"
+        ELSE 
+            PRINT "Turn left"
+        ENDIF
+
+        WHILE dist_0 IS LESS THAN 3
+            IF dist_1 IS GREATER THAN dist_2 THEN
+                CALL turn WITH (+straight_on_speed / dist_0, refresh_rate)
             ELSE 
-                SET memory TO 2
+                CALL turn WITH (-straight_on_speed / dist_0, refresh_rate)
             ENDIF
 
-            IF print_flag IS EQUALS TO 1 THEN
-                PRINT "New memory: " + memory
-                SET print_flag EQUALS TO 0
-            ENDIF
-        ENDIF
+            SET rot_g CALL find_token_gold
+            SET rot_g_m CALL module WITH rot_g
 
-        IF old_direction IS NOT EQUALS TO direction THEN
-            PRINT "New direction = " + direction
-            SET old_direction EQUALS TO direction
-            SET distance TO 0
-            SET print_flag EQUALS TO 1
-        ENDIF
-
-    ELSE
-        CALL turn_P WITH (90)
-        SET distance TO 0
+            FOR token IN CALL R.see
+                IF token.info.marker_type IS MARKER_TOKEN_GOLD AND token.dist IS LESS THAN dist_0 
+                    AND token.rot_y IS BETWEEN -min_angle_from_g AND min_angle_from_g THEN
+                        SET dist_0 EQUALS TO token.dist
+                ENDIF
+            ENDFOR
+        ENDWHILE
     ENDIF
+
+    CALL drive WITH (+straight_on_speed, refresh_rate)
 ENDWHILE
