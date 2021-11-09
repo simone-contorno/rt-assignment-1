@@ -93,5 +93,3 @@ Let's notice some possible and very well improvements:<br>
             distance between the robot and the closest golden token.</li>
     </ul>
 Thanks to have read this file, i hope it was clear and interesting.<br>
-<br>
-Bye.    :slightly_smiling_face:
