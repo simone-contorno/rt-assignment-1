@@ -18,7 +18,7 @@ a_th = 2 # Threshold for the control of the orientation
 d_th = 0.4 # Threshold for the control of the linear distance
 
 # max_speed = 100
-straight_on_speed = 100 # Straight on speed
+straight_on_speed = 75 # Straight on speed
 kp = 1 # Gain
 margin_error = 1 # Spin precision
 
