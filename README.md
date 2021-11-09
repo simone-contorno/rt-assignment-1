@@ -42,7 +42,7 @@ At the begin it looks like:
 Let's analyze each case:
     <ul>
         <li>If there is an angle too small between the robot and a golden token, the robot turns away to be almost parallel to the borders.</li>
-        <li>If there is a distance too small between the robot and a silver token, the robot starts a check to identify where the path is free;
+        <li>If there is a distance too small between the robot and a golden token, the robot starts a check to identify where the path is free;
             to do this, it checks the distance from the wall on the right and from the wall on the left (walls are represented by golden token)
             and go to the furthest one.</li>
         <li>If there is not any golden token between the robot and a silver token and the distance between them is little enough (less than the
