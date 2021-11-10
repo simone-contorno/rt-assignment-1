@@ -62,8 +62,15 @@ First of all install the simulated environment from github opening the terminal 
     </code>
 </pre>
 
-After, go in the folder 'python_simulator', afterwards into 'robot-sim', where there is the file 'run.py',
-and download rt_assignment_1 typing:
+After, go in the folder 'python_simulator' and type:
+
+<pre>
+    <code>
+        git checkout assignment
+    </code>
+</pre>
+
+Afterwards go into 'robot-sim', where there is the file 'run.py', and download rt_assignment_1 typing:
 
 <pre>
     <code>
