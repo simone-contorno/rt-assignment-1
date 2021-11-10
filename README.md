@@ -67,7 +67,7 @@ and download rt_assignment_1 typing:
 
 <pre>
     <code>
-        https://github.com/simone-contorno/rt_assignment_1
+        git clone https://github.com/simone-contorno/rt_assignment_1
     </code>
 </pre>
 
