@@ -15,7 +15,7 @@ A rapid description of how the program works (pseudo-code).<br>
 [Go to How it works](#how)
 
 ### Installation and Execution
-How install and run RT-Assignment-1 on Linux.<br>
+How install and run on Linux.<br>
 [Go to Installation and Execution](#installation)
 
 ### Improvements
