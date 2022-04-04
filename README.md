@@ -24,7 +24,7 @@ How this program could be improved.<br>
 <a name="intro"></a>
 ### Introduction
 
-RT-Assignment-1 uses the library sr.robot to get information about the robot and to control it.<br>
+This program uses the library sr.robot to get information about the robot and to control it.<br>
 In particular, the robot:
     <ol>
         <li>Follows a path.</li>
