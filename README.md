@@ -1,6 +1,5 @@
-# RT-Assignment-1
-## First Assignment of Research Track 1 - Robotics Engineering
-### Author: Simone Contorno
+# First Assignment of Research Track 1 - Robotics Engineering
+## Author: Simone Contorno
 
 <br>
 
