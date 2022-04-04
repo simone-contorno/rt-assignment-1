@@ -59,9 +59,16 @@ Download this repository typing:
 
 <pre><code>git clone https://github.com/simone-contorno/rt_assignment_1</code></pre>
 
-Go into the folder robot-sim and run 'assignment.py' type:
+Go into the downloaded folder and change the branch:
 
-<pre><code>python2 run.py assignment.py</code></pre>
+<pre><code>git checkout rt2-statistical-analysis</code></pre>
+
+Go into the folder robot-sim and run 'my_robot.py' and/or 'prof_robot':
+
+<pre><code>python2 run.py my_robot.py</code></pre>
+<pre><code>python2 run.py prof_robot.py</code></pre>
+
+The robots will write the expired time for each race into two files, respectively 'my_time.txt' and 'prof_time.txt'.
 
 You can also change some parameters into the code to modify the robot performance (e.g. straight_on_speed and refresh_rate).<br>
 You will find all the information about functions and variables in the file thanks to the comments.
