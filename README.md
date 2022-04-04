@@ -56,7 +56,7 @@ Look the pseudocode file for more details.<br>
 
 Download this repository typing:
 
-<pre><code>git clone https://github.com/simone-contorno/rt_assignment_1</code></pre>
+<pre><code>git clone https://github.com/simone-contorno/rt-assignment-1</code></pre>
 
 Go into the folder robot-sim and run 'assignment.py' type:
 
