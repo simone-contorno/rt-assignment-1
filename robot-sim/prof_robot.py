@@ -152,7 +152,7 @@ def race_time():
         print("Time elapsed: " + str(tm) + "\n")
         
         # Write the rime value in a file
-        f = open("prof_time.txt", 'a')
+        f = open("../data/prof_time.txt", 'a')
         f.write(sec + "." + dec[0:2] + "\n")
          
 '''
