@@ -1,6 +1,5 @@
-# RT-Assignment-1
-## First Assignment of Research Track 1 - Robotics Engineering
-### Author: Simone Contorno
+# First Assignment of Research Track 1 - Robotics Engineering
+## Author: Simone Contorno
 
 <br>
 
@@ -15,7 +14,7 @@ A rapid description of how the program works (pseudo-code).<br>
 [Go to How it works](#how)
 
 ### Installation and Execution
-How install and run RT-Assignment-1 on Linux.<br>
+How install and run on Linux.<br>
 [Go to Installation and Execution](#installation)
 
 ### Improvements
@@ -25,7 +24,7 @@ How this program could be improved.<br>
 <a name="intro"></a>
 ### Introduction
 
-RT-Assignment-1 uses the library sr.robot to get information about the robot and to control it.<br>
+This program uses the library sr.robot to get information about the robot and to control it.<br>
 In particular, the robot:
     <ol>
         <li>Follows a path.</li>
@@ -57,7 +56,7 @@ Look the pseudocode file for more details.<br>
 
 Download this repository typing:
 
-<pre><code>git clone https://github.com/simone-contorno/rt_assignment_1</code></pre>
+<pre><code>git clone https://github.com/simone-contorno/rt-assignment-1</code></pre>
 
 Go into the downloaded folder and change the branch:
 
