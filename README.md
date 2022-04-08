@@ -1,9 +1,8 @@
-# First Assignment of Research Track 1 - Robotics Engineering
-## Author: Simone Contorno
+# Research Track 2 - Robotics Engineering
+## Statistical Analysis
+### Author: Simone Contorno
 
 <br>
-
-Control of a robot in a simulated environment.
 
 ### Introduction
 An overview of this program function.<br>
@@ -17,15 +16,13 @@ A rapid description of how the program works (pseudo-code).<br>
 How install and run this program in Linux.<br>
 [Go to Installation and Execution](#installation)
 
-### Improvements
-How this program could be improved.<br>
-[Go to Improvements](#improve)
-
 <a name="intro"></a>
 ### Introduction
 
 The main aim of this branch is to provide a statistical analysis based on the comparison between the program of this repository and a another one.<br>
-The performance are evaluated on the base of the average time to compute a race, and different map configuration are used.
+The performance are evaluated on the base of the average time to compute a race, and different map configuration are used.<br><br>
+
+Read the file statistical_analysis.pdf for more details.
 
 <a name="how"></a>
 ### How it works
