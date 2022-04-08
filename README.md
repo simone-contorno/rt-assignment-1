@@ -49,4 +49,4 @@ Go into the folder robot-sim and run 'my_robot.py' and/or 'prof_robot':
 <pre><code>python2 run.py prof_robot.py</code></pre>
 
 The robots will write the expired time for each race into two files, respectively 'my_time.txt' and 'prof_time.txt'.<br>
-You will find all the information about functions and variables in the file thanks to the comments.<br><br>
+You will find all the information about functions and variables in the file thanks to the comments.
