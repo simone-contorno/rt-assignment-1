@@ -20,7 +20,7 @@ How install and run this program in Linux.<br>
 ### Introduction
 
 The main aim of this branch is to provide a statistical analysis based on the comparison between the program of this repository and an another one.<br>
-The performances are evaluated on the base of the average time to compute a race, and different map configurations are used.<br>
+The performances are evaluated on the base of the average time to compute a lap, and different map configurations are used.<br>
 
 Read the file statistical_analysis.pdf for more details.
 
